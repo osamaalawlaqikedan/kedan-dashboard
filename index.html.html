@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>داشبورد تطوير الأعمال — كدان</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, -apple-system, sans-serif; background: #f9f9f7; color: #1a1a18; padding: 1.5rem; direction: rtl; }
+.section-title { font-size: 13px; font-weight: 500; color: #5F5E5A; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+.cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+.card { background: #F1EFE8; border-radius: 8px; padding: 12px 14px; }
+.card-label { font-size: 12px; color: #5F5E5A; margin-bottom: 6px; }
+.card-value { font-size: 20px; font-weight: 500; color: #1a1a18; }
+.card-sub { font-size: 12px; color: #5F5E5A; margin-top: 4px; }
+.progress-bar { height: 6px; background: rgba(0,0,0,0.1); border-radius: 3px; margin-top: 8px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+.projects { display: grid; gap: 10px; margin-bottom: 1.5rem; }
+.project-row { background: #fff; border: 0.5px solid rgba(0,0,0,0.12); border-radius: 12px; padding: 14px 16px; }
+.project-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 8px; }
+.project-name { font-size: 14px; font-weight: 500; color: #1a1a18; }
+.badge { font-size: 11px; padding: 3px 10px; border-radius: 8px; font-weight: 500; }
+.badge-q2 { background: #E6F1FB; color: #0C447C; }
+.badge-q3 { background: #EAF3DE; color: #27500A; }
+.badge-q4 { background: #FAEEDA; color: #633806; }
+.project-numbers { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-bottom: 10px; }
+.num-box { text-align: center; }
+.num-label { font-size: 11px; color: #5F5E5A; margin-bottom: 3px; }
+.num-value { font-size: 13px; font-weight: 500; color: #1a1a18; }
+.chart-wrap { background: #fff; border: 0.5px solid rgba(0,0,0,0.12); border-radius: 12px; padding: 16px; margin-bottom: 1.5rem; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 12px; font-size: 12px; color: #5F5E5A; }
+.leg-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; margin-left: 5px; }
+.status-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 0.5px solid rgba(0,0,0,0.08); }
+.status-row:last-child { border-bottom: none; }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.status-name { font-size: 13px; color: #1a1a18; flex: 1; }
+.status-resp { font-size: 12px; color: #5F5E5A; }
+.edit-btn { font-size: 11px; padding: 3px 8px; border: 0.5px solid rgba(0,0,0,0.2); border-radius: 8px; background: transparent; color: #5F5E5A; cursor: pointer; }
+.edit-btn:hover { background: #F1EFE8; }
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); align-items: center; justify-content: center; z-index: 100; }
+.modal-overlay.open { display: flex; }
+.modal-box { background: #fff; border-radius: 12px; border: 0.5px solid rgba(0,0,0,0.12); padding: 20px; width: 320px; }
+.modal-title { font-size: 15px; font-weight: 500; margin-bottom: 14px; color: #1a1a18; }
+.modal-field { margin-bottom: 12px; }
+.modal-field label { font-size: 12px; color: #5F5E5A; display: block; margin-bottom: 4px; }
+.modal-field input, .modal-field select { width: 100%; padding: 7px 10px; font-size: 13px; border: 0.5px solid rgba(0,0,0,0.2); border-radius: 8px; background: #fff; color: #1a1a18; }
+.modal-actions { display: flex; gap: 8px; margin-top: 16px; }
+.btn-save { flex: 1; padding: 8px; background: #185FA5; color: #fff; border: none; border-radius: 8px; font-size: 13px; cursor: pointer; }
+.btn-cancel { flex: 1; padding: 8px; background: transparent; border: 0.5px solid rgba(0,0,0,0.2); border-radius: 8px; font-size: 13px; cursor: pointer; color: #1a1a18; }
+@media (max-width: 600px) {
+  .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .project-numbers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .project-header { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<h1 style="font-size:18px;font-weight:500;margin-bottom:1.5rem;color:#1a1a18;">داشبورد تطوير الأعمال — كدان 2026</h1>
+
+<div class="section-title">ملخص الأهداف</div>
+<div class="cards">
+  <div class="card">
+    <div class="card-label">إجمالي المستهدف</div>
+    <div class="card-value" id="total-target">5.5M</div>
+    <div class="card-sub">ريال سعودي</div>
+  </div>
+  <div class="card">
+    <div class="card-label">إجمالي الإنجاز</div>
+    <div class="card-value" id="total-achieved" style="color:#0F6E56;">0</div>
+    <div class="card-sub">ريال سعودي</div>
+    <div class="progress-bar"><div class="progress-fill" id="total-bar" style="width:0%;background:#1D9E75;"></div></div>
+  </div>
+  <div class="card">
+    <div class="card-label">نسبة الإنجاز الكلية</div>
+    <div class="card-value" id="total-pct" style="color:#185FA5;">0%</div>
+    <div class="card-sub">من المستهدف السنوي</div>
+  </div>
+  <div class="card">
+    <div class="card-label">الربع النشط</div>
+    <div class="card-value" style="color:#854F0B;">ق٢</div>
+    <div class="card-sub">أبريل — يونيو 2026</div>
+  </div>
+</div>
+
+<div class="section-title">المشاريع والمستهدفات الربعية</div>
+<div class="projects" id="projects-list"></div>
+
+<div class="chart-wrap">
+  <div class="section-title" style="margin-bottom:8px;">توزيع المستهدفات بالأرباع</div>
+  <div class="legend">
+    <span><span class="leg-dot" style="background:#378ADD;"></span>ق٢ أبريل-يونيو</span>
+    <span><span class="leg-dot" style="background:#639922;"></span>ق٣ يوليو-سبتمبر</span>
+    <span><span class="leg-dot" style="background:#BA7517;"></span>ق٤ أكتوبر-ديسمبر</span>
+    <span><span class="leg-dot" style="background:#1D9E75;"></span>الإنجاز الفعلي</span>
+  </div>
+  <div style="position:relative;width:100%;height:220px;">
+    <canvas id="mainChart"></canvas>
+  </div>
+</div>
+
+<div class="section-title">حالة المشاريع</div>
+<div style="background:#fff;border:0.5px solid rgba(0,0,0,0.12);border-radius:12px;padding:8px 16px;" id="status-list"></div>
+
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal-box">
+    <div class="modal-title" id="modal-title">تحديث الإنجاز</div>
+    <div class="modal-field">
+      <label>الإنجاز الفعلي (ريال)</label>
+      <input type="number" id="modal-achieved" placeholder="0" />
+    </div>
+    <div class="modal-field">
+      <label>الحالة</label>
+      <select id="modal-status">
+        <option value="0">لم يبدأ</option>
+        <option value="1">جارٍ</option>
+        <option value="2">مكتمل</option>
+        <option value="3">متأخر</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-save" onclick="saveEdit()">حفظ</button>
+      <button class="btn-cancel" onclick="closeModal()">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const projects = [
+  { id:0, name:'الحملات المركزة', target:1500000, q2:375000, q3:500000, q4:625000, achieved:0, status:0, resp:'أسامة + حمزة' },
+  { id:1, name:'باقات كدان', target:1000000, q2:250000, q3:333000, q4:417000, achieved:0, status:0, resp:'أسامة + حمزة' },
+  { id:2, name:'معرض النجاحات', target:900000, q2:225000, q3:300000, q4:375000, achieved:0, status:0, resp:'أسامة + حمزة' },
+  { id:3, name:'إعادة الاستهداف الذكي', target:100000, q2:25000, q3:33000, q4:42000, achieved:0, status:0, resp:'أسامة + حمزة' },
+  { id:4, name:'المنافسات الحكومية', target:2000000, q2:500000, q3:666000, q4:834000, achieved:0, status:0, resp:'أمل' },
+  { id:5, name:'مصنع الابتكار', target:0, q2:0, q3:0, q4:0, achieved:0, status:0, resp:'أسامة + حمزة' },
+];
+
+const statusLabels = ['لم يبدأ','جارٍ','مكتمل','متأخر'];
+const statusColors = ['#888780','#378ADD','#1D9E75','#E24B4A'];
+
+function fmt(n) {
+  if(n >= 1000000) return (n/1000000).toFixed(1).replace(/\.0$/,'') + 'M';
+  if(n >= 1000) return (n/1000).toFixed(0) + 'K';
+  return n.toLocaleString();
+}
+function pct(a,b) { return b > 0 ? Math.round(a/b*100) : 0; }
+
+function renderProjects() {
+  const el = document.getElementById('projects-list');
+  el.innerHTML = '';
+  projects.forEach(p => {
+    if(p.target === 0) return;
+    const pTotal = pct(p.achieved, p.target);
+    el.innerHTML += `
+    <div class="project-row">
+      <div class="project-header">
+        <div class="project-name">${p.name}</div>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+          <span class="badge badge-q2">ق٢: ${fmt(p.q2)}</span>
+          <span class="badge badge-q3">ق٣: ${fmt(p.q3)}</span>
+          <span class="badge badge-q4">ق٤: ${fmt(p.q4)}</span>
+          <button class="edit-btn" onclick="openModal(${p.id})">تحديث</button>
+        </div>
+      </div>
+      <div class="project-numbers">
+        <div class="num-box"><div class="num-label">المستهدف السنوي</div><div class="num-value">${fmt(p.target)}</div></div>
+        <div class="num-box"><div class="num-label">الإنجاز الفعلي</div><div class="num-value" style="color:#1D9E75;">${fmt(p.achieved)}</div></div>
+        <div class="num-box"><div class="num-label">نسبة الإنجاز</div><div class="num-value" style="color:#185FA5;">${pTotal}%</div></div>
+        <div class="num-box"><div class="num-label">المسؤول</div><div class="num-value" style="font-size:11px;">${p.resp}</div></div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:11px;color:#5F5E5A;">
+          <span>التقدم الكلي</span><span>${pTotal}%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(pTotal,100)}%;background:#1D9E75;"></div></div>
+      </div>
+    </div>`;
+  });
+}
+
+function renderStatus() {
+  const el = document.getElementById('status-list');
+  el.innerHTML = '';
+  projects.forEach(p => {
+    el.innerHTML += `
+    <div class="status-row">
+      <div class="status-dot" style="background:${statusColors[p.status]};"></div>
+      <div class="status-name">${p.name}</div>
+      <div class="status-resp">${p.resp}</div>
+      <div style="font-size:12px;color:${statusColors[p.status]};min-width:60px;text-align:left;">${statusLabels[p.status]}</div>
+    </div>`;
+  });
+}
+
+function updateSummary() {
+  const totalTarget = projects.reduce((s,p)=>s+p.target,0);
+  const totalAchieved = projects.reduce((s,p)=>s+p.achieved,0);
+  const totalPct = pct(totalAchieved, totalTarget);
+  document.getElementById('total-target').textContent = fmt(totalTarget);
+  document.getElementById('total-achieved').textContent = fmt(totalAchieved);
+  document.getElementById('total-pct').textContent = totalPct + '%';
+  document.getElementById('total-bar').style.width = Math.min(totalPct,100) + '%';
+}
+
+let chartInst = null;
+function renderChart() {
+  const filtered = projects.filter(p=>p.target>0);
+  const labels = filtered.map(p=>p.name);
+  const ctx = document.getElementById('mainChart');
+  if(chartInst) chartInst.destroy();
+  chartInst = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        {label:'ق٢',data:filtered.map(p=>p.q2),backgroundColor:'#378ADD',borderRadius:3},
+        {label:'ق٣',data:filtered.map(p=>p.q3),backgroundColor:'#639922',borderRadius:3},
+        {label:'ق٤',data:filtered.map(p=>p.q4),backgroundColor:'#BA7517',borderRadius:3},
+        {label:'الإنجاز',data:filtered.map(p=>p.achieved),backgroundColor:'#1D9E75',borderRadius:3},
+      ]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+fmt(ctx.raw)+' ريال'}}},
+      scales:{
+        x:{ticks:{font:{size:10},color:'#888',autoSkip:false,maxRotation:30}},
+        y:{ticks:{callback:v=>fmt(v),font:{size:10},color:'#888'}}
+      }
+    }
+  });
+}
+
+let editId = null;
+function openModal(id) {
+  editId = id;
+  const p = projects[id];
+  document.getElementById('modal-title').textContent = 'تحديث: ' + p.name;
+  document.getElementById('modal-achieved').value = p.achieved;
+  document.getElementById('modal-status').value = p.status;
+  document.getElementById('edit-modal').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('edit-modal').classList.remove('open');
+}
+function saveEdit() {
+  const p = projects[editId];
+  p.achieved = parseInt(document.getElementById('modal-achieved').value) || 0;
+  p.status = parseInt(document.getElementById('modal-status').value);
+  closeModal();
+  renderAll();
+}
+function renderAll() {
+  updateSummary();
+  renderProjects();
+  renderStatus();
+  renderChart();
+}
+renderAll();
+</script>
+</body>
+</html>
