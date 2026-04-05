@@ -127,7 +127,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background: #f9f9f7; c
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const projects = [
+const defaultProjects = [
   { id:0, name:'الحملات المركزة', target:1500000, q2:375000, q3:500000, q4:625000, achieved:0, status:0, resp:'أسامة + حمزة' },
   { id:1, name:'باقات كدان', target:1000000, q2:250000, q3:333000, q4:417000, achieved:0, status:0, resp:'أسامة + حمزة' },
   { id:2, name:'معرض النجاحات', target:900000, q2:225000, q3:300000, q4:375000, achieved:0, status:0, resp:'أسامة + حمزة' },
@@ -135,6 +135,22 @@ const projects = [
   { id:4, name:'المنافسات الحكومية', target:2000000, q2:500000, q3:666000, q4:834000, achieved:0, status:0, resp:'أمل' },
   { id:5, name:'مصنع الابتكار', target:0, q2:0, q3:0, q4:0, achieved:0, status:0, resp:'أسامة + حمزة' },
 ];
+
+function loadProjects() {
+  try {
+    const saved = localStorage.getItem('kedan_projects');
+    if (saved) return JSON.parse(saved);
+  } catch(e) {}
+  return defaultProjects.map(p => ({...p}));
+}
+
+function saveProjects() {
+  try {
+    localStorage.setItem('kedan_projects', JSON.stringify(projects));
+  } catch(e) {}
+}
+
+const projects = loadProjects();
 
 const statusLabels = ['لم يبدأ','جارٍ','مكتمل','متأخر'];
 const statusColors = ['#888780','#378ADD','#1D9E75','#E24B4A'];
@@ -248,6 +264,7 @@ function saveEdit() {
   const p = projects[editId];
   p.achieved = parseInt(document.getElementById('modal-achieved').value) || 0;
   p.status = parseInt(document.getElementById('modal-status').value);
+  saveProjects();
   closeModal();
   renderAll();
 }
